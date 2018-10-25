@@ -1,6 +1,8 @@
-:- consult('display.pl').
 :- consult('input.pl').
+:- consult('display.pl').
+
 
 clobber:-  insertRow(Y),
-           insertColumn(Z).
-         
+           insertColumn(Z),
+           initialBoard(X),
+           display_board(X).
