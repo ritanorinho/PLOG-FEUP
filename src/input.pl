@@ -1,37 +1,38 @@
-insertRow(NumberRow):- readRow(Row),
-                 validateRow(Row,NumberRow).
+insert_row(Row):- read_row(Row),
+                 validate_row(Row).
 
-insertColumn(NumberColumn):- readColumn(Column),
-                       validateColumn(Column,NumberColumn).
+insert_column(NumberColumn):- read_column(Column),
+                       validate_column(Column,NumberColumn).
 
-readRow(Row):- write('Row: '),
+read_row(Row):- write('Row: \n'),
                read(Row).
 
-readColumn(Column):- write('Column: '),
-                     read(Column).
+read_column(Column):- 
+                    write('Column: \n'),
+                    read(Column).
 
-validateColumn('A',NumberColumn):- NumberColumn = 1.
-validateColumn('B',NumberColumn):- NumberColumn = 2.
-validateColumn('C',NumberColumn):- NumberColumn = 3.
-validateColumn('D',NumberColumn):- NumberColumn = 4.
-validateColumn('E',NumberColumn):- NumberColumn = 5.
-validateColumn('F',NumberColumn):- NumberColumn = 6.
-validateColumn('G',NumberColumn):- NumberColumn = 7.
-validateColumn('H',NumberColumn):- NumberColumn = 8.
-validateColumn(_Column,NumberColumn):- 
+validate_column(a,1).
+validate_column(b,2).
+validate_column(c,3).
+validate_column(d,4).
+validate_column(e,5).
+validate_column(f,6).
+validate_column(g,7).
+validate_column(h,8).
+validate_column(_Column,NumberColumn):- 
     write('Column invalid! Please insert a column between A-G!\n\n'),
-    readColumn(Input),
-    validateColumn(Input, NumberColumn).
+    read_column(Input),
+    validate_column(Input, NumberColumn).
 
-validateRow(1,NumberRow):- NumberRow = 1.
-validateRow(2,NumberRow):- NumberRow = 2.
-validateRow(3,NumberRow):- NumberRow = 3.
-validateRow(4,NumberRow):- NumberRow = 4.
-validateRow(5,NumberRow):- NumberRow = 5.
-validateRow(6,NumberRow):- NumberRow = 6.
-validateRow(7,NumberRow):- NumberRow = 7.
-validateRow(8,NumberRow):- NumberRow = 8.
-validateRow(_Row,NumberRow):- 
+validate_row(1).
+validate_row(2).
+validate_row(3).
+validate_row(4).
+validate_row(5).
+validate_row(6).
+validate_row(7).
+validate_row(8).
+validate_row(_Row):- 
     write('Row invalid! Please insert a row between 1-8!\n\n'),
-    readRow(Input),
-    validateColumn(Input, NumberRow).
+    read_row(Input),
+    validate_column(Input).

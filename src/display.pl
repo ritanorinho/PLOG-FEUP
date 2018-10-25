@@ -16,9 +16,8 @@ display_board([H|T]):-
                     nl,
                     write('  | A | B | C | D | E | F | G | H |\n'),
                     write('  |---|---|---|---|---|---|---|---|\n'),
-                    print_tab([H|T],1),
-                    write('  |---|---|---|---|---|---|---|---|\n').
-print_tab([]).
+                    print_tab([H|T],1).
+print_tab([],_).
 print_tab([H|T],X):- 
                 write(X),
                 write(' '),

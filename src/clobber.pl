@@ -1,8 +1,8 @@
 :- consult('input.pl').
 :- consult('display.pl').
+:- consult('logic.pl').
 
 
-clobber:-  insertRow(Y),
-           insertColumn(Z),
-           initialBoard(X),
-           display_board(X).
+clobber:-  initialBoard(X),
+         ask_new_play(X, Player,ActualRow,ActualColumn,NewRow, NewColumn, NewBoarder).
+           %display_board(X).
