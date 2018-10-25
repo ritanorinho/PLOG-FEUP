@@ -13,7 +13,7 @@ replace_in_matrix([H|T],0,Column,Value,[H1|T]):-
 replace_in_matrix([H|T],Row,Column,Value,[H|T1]) :-
     Row > 0,
     NewRow is Row - 1,
-    replace_in_matrix(H,NewRow,Column,Value,T1).
+    replace_in_matrix(T,NewRow,Column,Value,T1).
     
 get_value_from_list([H|_T],0,Value):-
         Value= H.
@@ -32,11 +32,11 @@ get_value_from_matrix([_H|T],Row,Column,Value):-
     NewRow is Row -1,
     get_value_from_matrix(T,NewRow,Column,Value).
 
-ask_new_play(Boarder, Player,ActualRow,ActualColumn,NewRow, NewColumn, NewBoarder):-
+ask_new_play(Board, Player,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
         insertRow(ActualRow),
         insertColumn(ActualColumn),
-        get_value_from_matrix(Boarder,ActualRow,ActualColumn,Value),
         insertRow(NewRow),
-        insertColumn(NewColumn).
-
-
+        insertColumn(NewColumn),
+        replace_in_matrix(Board,NewRow,NewColumn,'white',NewBoard),
+        replace_in_matrix(NewBoard,ActualRow,ActualColumn,'empty',NewBoard2),
+        display_board(NewBoard2).

@@ -23,8 +23,7 @@ print_tab([H|T],X):-
                 write(' '),
                 write('|'),
                 write(' '),
-                print_line(H),
-                 
+                print_line(H),  
                 nl,
                 write('  |---|---|---|---|---|---|---|---|\n'),
                 incr(X,X1),

@@ -4,5 +4,4 @@
 
 
 clobber:-  initialBoard(X),
-         ask_new_play(X, Player,ActualRow,ActualColumn,NewRow, NewColumn, NewBoarder).
-           %display_board(X).
+            ask_new_play(X, Player,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard).
