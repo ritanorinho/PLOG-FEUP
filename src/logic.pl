@@ -32,6 +32,17 @@ get_value_from_matrix([_H|T],Row,Column,Value):-
     NewRow is Row - 1,
     get_value_from_matrix(T,NewRow,Column,Value).
 
+go_through_matrix([H|T]):-
+    go_through_list(H),
+    go_through_matrix(T).
+go_through_matrix([]).
+
+go_through_list([],Value).
+%go_through_list([H|T],Value):-
+
+
+check_victory(Board,1):-
+
 ask_new_play(Board, 1 ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
         write('PLAYER 1\n'),
         ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn),
