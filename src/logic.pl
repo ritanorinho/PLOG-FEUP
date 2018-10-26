@@ -29,14 +29,26 @@ get_value_from_matrix([H|_T],0,Column,Value):-
 
 get_value_from_matrix([_H|T],Row,Column,Value):-
     Row > 0,
-    NewRow is Row -1,
+    NewRow is Row - 1,
     get_value_from_matrix(T,NewRow,Column,Value).
 
-ask_new_play(Board, Player,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
-        insertRow(ActualRow),
-        insertColumn(ActualColumn),
-        insertRow(NewRow),
-        insertColumn(NewColumn),
+ask_new_play(Board, 1 ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
+        write('PLAYER 1\n'),
+        ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn),
         replace_in_matrix(Board,NewRow,NewColumn,'white',NewBoard),
         replace_in_matrix(NewBoard,ActualRow,ActualColumn,'empty',NewBoard2),
-        display_board(NewBoard2).
+        next_player(1,NextPlayer),
+        display_board(NewBoard2),
+         loop_game(NewBoard2,NextPlayer,Player1).
+
+ask_new_play(Board, 2 ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
+        write('PLAYER 2\n'),
+        ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn),
+        replace_in_matrix(Board,NewRow,NewColumn,'black',NewBoard),
+        replace_in_matrix(NewBoard,ActualRow,ActualColumn,'empty',NewBoard2),
+        next_player(2,NextPlayer),
+        display_board(NewBoard2),
+         loop_game(NewBoard2,NextPlayer,Player1).
+
+loop_game(Board,Player,NextPlayer):-
+                    ask_new_play(Board, Player ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard).

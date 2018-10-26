@@ -36,3 +36,26 @@ validate_row(_Row,NumberRow):-
     write('Row invalid! Please insert a row between 1-8!\n\n'),
     read_row(Input),
     validate_row(Input,NumberRow).
+
+validate_input(Row,NewRow,Column,NewColumn):-
+        Row == NewRow,
+        NewColumn =:= Column +1.
+validate_input(Row,NewRow,Column,NewColumn):-
+        Row==NewRow,
+        NewColumn =:= Column - 1.
+validate_input(Row,NewRow,Column,NewColumn):-
+        Column==NewColumn,
+         NewRow =:= Row -1.
+validate_input(Row,NewRow,Column,NewColumn):-
+       Column==NewColumn,
+        NewRow =:= Row + 1.
+validate_input(Row,NewRow,Column,NewColumn) :-
+    write('Your new coordinates must be adjacent with actual position!\n'),
+    ask_new_position(ActualRow,NRow,ActualColumn,NColumn).
+
+ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn):-
+        insert_row(ActualRow),
+        insert_column(ActualColumn),
+        insert_row(NewRow),
+        insert_column(NewColumn),
+        validate_input(ActualRow,NewRow,ActualColumn,NewColumn).
