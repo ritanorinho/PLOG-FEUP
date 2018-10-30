@@ -7,6 +7,18 @@ initialBoard([[black,white,black,white,black,white,black,white],
               [black,white,black,white,black,white,black,white],
               [white,black,white,black,white,black,white,black]
 ]).
+finalBoard([ [black,white,empty,empty,empty,empty,empty,empty],
+                     [empty,empty,black,empty,empty,empty,empty,empty],
+                     [empty,empty,empty,empty,empty,empty,empty,white],
+                     [empty,empty,empty,empty,empty,empty,empty,empty],
+                     [empty,white,empty,empty,black,empty,empty,empty],
+                     [empty,empty,empty,empty,empty,empty,empty,empty],
+                     [empty,empty,empty,empty,empty,empty,empty,empty],
+                     [empty,empty,empty,empty,empty,empty,empty,empty]
+]).
+aux([[black,empty,black],
+     [black,empty,black],
+     [black,empty,empty]]).
 translate(empty,'.').
 translate(black,'O').
 translate(white,'W').
