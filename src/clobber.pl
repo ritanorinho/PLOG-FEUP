@@ -3,6 +3,6 @@
 :- consult('logic.pl').
 
 
-clobber:-   initialBoard(X),
+clobber:-   finalBoard(X),
             display_board(X),
             loop_game(X,1,NextPlayer).
