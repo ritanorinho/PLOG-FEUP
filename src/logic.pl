@@ -80,7 +80,7 @@ check_game_state(Board,X,Y,Player):- \+check_victory(Board,X,Y,Player),
 ask_new_play(Board, Player ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
         write('PLAYER '), write(Player),nl,
         player_piece(Player,Piece),
-        ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn),
+        ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn,Player,Board),
         replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
         replace_in_matrix(NewBoard,ActualRow,ActualColumn,'empty',NewBoard2),
         check_game_state(NewBoard2,0,0,Player).

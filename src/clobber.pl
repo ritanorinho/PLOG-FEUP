@@ -1,8 +1,9 @@
 :- consult('input.pl').
 :- consult('display.pl').
 :- consult('logic.pl').
+:- use_module(library(random)).
 
 
 clobber:-   finalBoard(X),
-            display_board(X),
+            %display_board(X),
             loop_game(X,1,NextPlayer).

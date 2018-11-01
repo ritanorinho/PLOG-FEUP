@@ -37,25 +37,37 @@ validate_row(_Row,NumberRow):-
     read_row(Input),
     validate_row(Input,NumberRow).
 
-validate_input(Row,NewRow,Column,NewColumn):-
+validate_move(Row,NewRow,Column,NewColumn,Player,Board):- 
+        get_value_from_matrix(Board,Row,Column,Value),
+        player_piece(Player,Piece),
+        Value == Piece,
+        get_value_from_matrix(Board,NewRow,NewColumn,Value1),
+        next_player(Player,NextPlayer),
+        player_piece(NextPlayer,NextPiece),
+        Value1 == NextPiece.
+validate_input(Row,NewRow,Column,NewColumn,Player,Board):-
+        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
         Row == NewRow,
         NewColumn =:= Column +1.
-validate_input(Row,NewRow,Column,NewColumn):-
+validate_input(Row,NewRow,Column,NewColumn,Player,Board):-
+        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
         Row==NewRow,
         NewColumn =:= Column - 1.
-validate_input(Row,NewRow,Column,NewColumn):-
+validate_input(Row,NewRow,Column,NewColumn,Player,Board):-
+        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
         Column==NewColumn,
          NewRow =:= Row -1.
-validate_input(Row,NewRow,Column,NewColumn):-
-       Column==NewColumn,
+validate_input(Row,NewRow,Column,NewColumn,Player,Board):-
+        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
+        Column==NewColumn,
         NewRow =:= Row + 1.
-validate_input(Row,NewRow,Column,NewColumn) :-
+validate_input(Row,NewRow,Column,NewColumn,Player,Board) :-
     write('Your new coordinates must be adjacent with actual position!\n'),
     ask_new_position(ActualRow,NRow,ActualColumn,NColumn).
 
-ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn):-
+ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn,Player,Board):-
         insert_row(ActualRow),
         insert_column(ActualColumn),
         insert_row(NewRow),
         insert_column(NewColumn),
-        validate_input(ActualRow,NewRow,ActualColumn,NewColumn).
+        validate_input(ActualRow,NewRow,ActualColumn,NewColumn,Player,Board).
