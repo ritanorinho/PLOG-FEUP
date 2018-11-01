@@ -34,64 +34,38 @@ get_value_from_matrix([_H|T],Row,Column,Value):-
     NewRow is Row - 1,
     get_value_from_matrix(T,NewRow,Column,Value).
 %percorrer o tabuleiro e a peça encontrada em (X,Y) não é preta, portanto não se faz as verificações
-go_through_list([H|T],'black',X,Y):-
+go_through_list([H|T],Piece1,Piece2,X,Y):-
                                 get_value_from_matrix([H|T],X,Y,Value),
-                                Value \= 'black'. 
-%percorrer o tabuleiro e verificar se existem peças brancas nas adjacências das peças pretas
-go_through_list([H|T],'black',X,Y):-
+                                Value \= Piece1.
+                           
+go_through_list([H|T],Piece1,Piece2,X,Y):-  
                                 X1 is X-1,
                                 X2 is X+1,
                                 Y1 is Y-1,
                                 Y2 is Y+1,
                                 get_value_from_matrix([H|T],X,Y,Value),
-                                Value == 'black',!,               
-                                ((\+(get_value_from_matrix([H|T],X1,Y,'white'))),!,
-                                (\+(get_value_from_matrix([H|T],X2,Y,'white'))),!,                           
-                                (\+(get_value_from_matrix([H|T],X,Y1,'white'))),!,
-                                (\+(get_value_from_matrix([H|T],X,Y2,'white')))).
-                   
- %percorrer o tabuleiro e a peça encontrada em (X,Y) não é branca, portanto não se faz as verificações
- go_through_list([H|T],'white',X,Y):-
-                                get_value_from_matrix([H|T],X,Y,Value),
-                                Value \= 'white'.        
-go_through_list([H|T],'white',X,Y):-
-                                X1 is X-1,
-                                X2 is X+1,
-                                Y1 is Y-1,
-                                Y2 is Y+1,
-                                get_value_from_matrix([H|T],X,Y,Value),
-                                Value == 'white',!,                         
-                                (\+(get_value_from_matrix([H|T],X1,Y,'black'))),!,
-                                (\+(get_value_from_matrix([H|T],X2,Y,'black'))),!,                               
-                                (\+(get_value_from_matrix([H|T],X,Y1,'black'))),!,
-                                (\+(get_value_from_matrix([H|T],X,Y2,'black'))).
+                                Value == Piece1,!,                         
+                                (\+(get_value_from_matrix([H|T],X1,Y,Piece2))),!,
+                                (\+(get_value_from_matrix([H|T],X2,Y,Piece2))),!,                               
+                                (\+(get_value_from_matrix([H|T],X,Y1,Piece2))),!,
+                                (\+(get_value_from_matrix([H|T],X,Y2,Piece2))).
 
 %quando chega ao final da linha tem que passar para a linha seguinte e a coluna volta a 0
-check_victory(Board,X,7,1):- 
+check_victory(Board,X,7,Player):- 
                             X1 is X+1,
                             Y is 0,
-                            check_victory(Board,X1,Y,1).
+                            check_victory(Board,X1,Y,Player).
 %quando chega ao final do tabuleiro
-check_victory(Board,7,7,1):- write('Player 1 won the game!!!\n').
+check_victory(Board,7,7,Player):- write('Player '),write(Player),write(' won the game!!!\n').
 %verificar se jogador1 ganhou
-check_victory(Board, X,Y,1):-
-
-    go_through_list(Board,'white',X,Y),
+check_victory(Board, X,Y,Player):-
+    player_piece(Player,Piece),
+    next_player(Player,NextPlayer),
+    player_piece(NextPlayer,Piece2),
+    go_through_list(Board,Piece,Piece2,X,Y),
     Y1 is Y+1,
-    check_victory(Board,X,Y1,1).
+    check_victory(Board,X,Y1,Player).
   
-check_victory(Board,X,7,2):- 
-                            X1 is X+1,
-                            Y is 0,
-                            check_victory(Board,X1,Y,2).
-
-check_victory(Board,7,7,2).
-
-%verificar se jogador2 ganhou
-check_victory(Board, X,Y,2):-
-    go_through_list(Board,'black',X,Y),
-    Y1 is Y+1,
-    check_victory(Board,X,Y1,2).
 
 
 check_game_state(Board,X,Y,Player):- check_victory(Board,X,Y,Player).
@@ -103,21 +77,14 @@ check_game_state(Board,X,Y,Player):- \+check_victory(Board,X,Y,Player),
 
 
 
-
-
-ask_new_play(Board, 1 ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
-        write('PLAYER 1\n'),
+ask_new_play(Board, Player ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
+        write('PLAYER '), write(Player),nl,
+        player_piece(Player,Piece),
         ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn),
-        replace_in_matrix(Board,NewRow,NewColumn,'white',NewBoard),
+        replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
         replace_in_matrix(NewBoard,ActualRow,ActualColumn,'empty',NewBoard2),
-        check_game_state(NewBoard2,0,0,1).
+        check_game_state(NewBoard2,0,0,Player).
 
-ask_new_play(Board, 2 ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard):-
-        write('PLAYER 2\n'),
-        ask_new_position(ActualRow,NewRow,ActualColumn,NewColumn),
-        replace_in_matrix(Board,NewRow,NewColumn,'black',NewBoard),
-        replace_in_matrix(NewBoard,ActualRow,ActualColumn,'empty',NewBoard2),
-        check_game_state(NewBoard2,0,0,2).
 
 loop_game(Board,Player,NextPlayer):-
                    ask_new_play(Board, Player ,NextPlayer,ActualRow,ActualColumn,NewRow, NewColumn, NewBoard).
