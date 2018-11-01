@@ -11,7 +11,7 @@ finalBoard([ [black,white,empty,empty,empty,empty,empty,empty],
                      [empty,empty,black,empty,empty,empty,empty,empty],
                      [empty,empty,empty,empty,empty,empty,empty,white],
                      [empty,empty,empty,empty,empty,empty,empty,empty],
-                     [empty,white,empty,empty,black,empty,empty,empty],
+                     [empty,white,empty,empty,black,white,empty,empty],
                      [empty,empty,empty,empty,empty,empty,empty,empty],
                      [empty,empty,empty,empty,empty,empty,empty,empty],
                      [empty,empty,empty,empty,empty,empty,empty,empty]
