@@ -68,20 +68,26 @@ check_victory(Board, X,Y,Player):-
   
 
 
-check_game_state(Board,X,Y,Player):- check_victory(Board,X,Y,Player).
+check_game_state(Board,X,Y,Player,Bot,BotPlayer):- check_victory(Board,X,Y,Player).
 
-check_game_state(Board,X,Y,Player):- \+check_victory(Board,X,Y,Player),
+check_game_state(Board,X,Y,Player,Bot,BotPlayer):- \+check_victory(Board,X,Y,Player),
                                     next_player(Player,NextPlayer),
                                     display_board(Board),
-                                    loop_game(Board,NextPlayer,Player1).
+                                    loop_game(Board,NextPlayer,Player1,Bot,BotPlayer).
 
 
-
-ask_new_play(Board, Player ,NextPlayer, NewBoard):-
+ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer):-
+        Bot == 'y',
+        Player==BotPlayer, 
         write('PLAYER '), write(Player),nl,
-        ask_new_position(Player,Board,NewBoard2),
-        check_game_state(NewBoard2,0,0,Player).
+        generate_random_move(Player,Board,NewBoard2,BotPlayer),
+        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer).
+
+ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer):-
+        write('PLAYER '), write(Player),nl,
+        ask_new_position(Player,Board,NewBoard2,BotPlayer),
+        check_game_state(NewBoard2,0,0,Player,Bot,BotPlayer).
 
 
-loop_game(Board,Player,NextPlayer):-
-                   ask_new_play(Board, Player ,NextPlayer, NewBoard).
+loop_game(Board,Player,NextPlayer,Bot,BotPlayer):-
+                   ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer).

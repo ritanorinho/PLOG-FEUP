@@ -37,7 +37,7 @@ validate_row(_Row,NumberRow):-
     read_row(Input),
     validate_row(Input,NumberRow).
 
-validate_move(Row,NewRow,Column,NewColumn,Player,Board):- 
+validate_move(Row,NewRow,Column,NewColumn,Player,Board,BotPlayer):- 
         get_value_from_matrix(Board,Row,Column,Value),
         player_piece(Player,Piece),
         Value == Piece,
@@ -45,41 +45,62 @@ validate_move(Row,NewRow,Column,NewColumn,Player,Board):-
         next_player(Player,NextPlayer),
         player_piece(NextPlayer,NextPiece),
         Value1 == NextPiece.
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2):-
-        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
+validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer):-
         Row == NewRow,
         NewColumn =:= Column +1,
+        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
         player_piece(Player,Piece),
         replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
-        replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2).
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2):-
-        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
+        replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2),
+        show_positions(Row,NewRow,Column,NewColumn).
+validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer):-
         Row==NewRow,
         NewColumn =:= Column - 1,
+        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
          player_piece(Player,Piece),
         replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
-        replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2).
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2):-
-        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
+        replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2),
+        show_positions(Row,NewRow,Column,NewColumn).
+validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer):-
         Column==NewColumn,
          NewRow =:= Row -1,
+        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
         player_piece(Player,Piece),
         replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
-        replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2).
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2):-
-        validate_move(Row,NewRow,Column,NewColumn,Player,Board),
+        replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2),
+        show_positions(Row,NewRow,Column,NewColumn).
+validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer):-
         Column==NewColumn,
         NewRow =:= Row + 1,
-         player_piece(Player,Piece),
+         validate_move(Row,NewRow,Column,NewColumn,Player,Board),
+        player_piece(Player,Piece),
         replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
-        replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2).
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2) :-
+        replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2),
+        show_positions(Row,NewRow,Column,NewColumn).
+validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer) :-
+        Bot == 'y',
+        Player == BotPlayer,
+        generate_random_move(Player,Board,NewBoard2,BotPlayer).
+validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer) :-
     write('Your new coordinates must be adjacent with actual position!\n'),
-    ask_new_position(Player,Board,NewBoard2).
+    ask_new_position(Player,Board,NewBoard2,BotPlayer).
 
-ask_new_position(Player,Board,NewBoard2):-
+
+ask_new_position(Player,Board,NewBoard2,BotPlayer):-
         insert_row(Row),
         insert_column(Column),
         insert_row(NewRow),
         insert_column(NewColumn),
-        validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2).
+        validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,BotPlayer).
+
+
+show_positions(Row,NewRow,Column,NewColumn):-
+                         validate_row(Row1,Row),
+                         validate_row(Row2,NewRow),
+                         validate_column(Column1,Column),
+                         validate_column(Column2,NewColumn),
+                         write('MOVEMENT'),nl,
+                         write('['), write(Row1), write(','),write(Column1),write(']'),nl,
+                         write('['), write(Row2), write(','),write(Column2),write(']'),nl.
+
+                                        

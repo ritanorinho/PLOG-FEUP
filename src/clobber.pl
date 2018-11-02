@@ -5,6 +5,7 @@
 :- use_module(library(random)).
 
 
-clobber:-   finalBoard(X),
-            %display_board(X),
-            loop_game(X,1,NextPlayer).
+clobber:-   initialBoard(X),
+            display_board(X),
+            choose_bot_player(BotPlayer),
+            loop_game(X,1,NextPlayer,'y',BotPlayer).
