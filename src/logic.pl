@@ -56,7 +56,7 @@ check_victory(Board,X,7,Player):-
                             Y is 0,
                             check_victory(Board,X1,Y,Player).
 %quando chega ao final do tabuleiro
-check_victory(Board,7,7,Player):- write('Player '),write(Player),write(' won the game!!!\n').
+check_victory(Board,7,7,Player):- display_board(Board),write('Player '),write(Player),write(' won the game!!!\n').
 %verificar se jogador1 ganhou
 check_victory(Board, X,Y,Player):-
     player_piece(Player,Piece),
@@ -68,26 +68,34 @@ check_victory(Board, X,Y,Player):-
   
 
 
-check_game_state(Board,X,Y,Player,Bot,BotPlayer):- check_victory(Board,X,Y,Player).
+check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2):- check_victory(Board,X,Y,Player).
 
-check_game_state(Board,X,Y,Player,Bot,BotPlayer):- \+check_victory(Board,X,Y,Player),
+check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2):- \+check_victory(Board,X,Y,Player),
                                     next_player(Player,NextPlayer),
                                     display_board(Board),
-                                    loop_game(Board,NextPlayer,Player1,Bot,BotPlayer).
+                                    loop_game(Board,NextPlayer,Player1,Bot,BotPlayer,BotPlayer2).
 
 
-ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer):-
+ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2):-
         Bot == 'y',
-        Player==BotPlayer, 
+        Player==BotPlayer1, 
         write('PLAYER '), write(Player),nl,
-        generate_random_move(Player,Board,NewBoard2,BotPlayer),
-        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer).
+        generate_random_move(Player,Board,NewBoard2,BotPlayer1),
+        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2).
 
-ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer):-
+ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2):-
+        Bot == 'y',
+        Player==BotPlayer2, 
         write('PLAYER '), write(Player),nl,
-        ask_new_position(Player,Board,NewBoard2,BotPlayer),
-        check_game_state(NewBoard2,0,0,Player,Bot,BotPlayer).
+        generate_random_move(Player,Board,NewBoard2,BotPlayer2),
+        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2).
+
+ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2):-
+        BotPlayer2 == 0,
+        write('PLAYER '), write(Player),nl,
+        ask_new_position(Player,Board,NewBoard2,BotPlayer1),
+        check_game_state(NewBoard2,0,0,Player,Bot,BotPlayer1,BotPlayer2).
 
 
-loop_game(Board,Player,NextPlayer,Bot,BotPlayer):-
-                   ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer).
+loop_game(Board,Player,NextPlayer,Bot,BotPlayer1,BotPlayer2):-
+                   ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2).
