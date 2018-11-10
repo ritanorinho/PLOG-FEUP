@@ -146,12 +146,13 @@ check_victory(Board, X,Y,Player):-
                                                         check_number_plays(Board,X,Y1,Player,Number4,FinalNumber).
 
 
-check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2):- check_victory(Board,X,Y,Player).
+check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2,Difficulty):-
+                                                                        check_victory(Board,X,Y,Player).
 
-check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2):- \+check_victory(Board,X,Y,Player),
+check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2,Difficulty):-
+                                    \+check_victory(Board,X,Y,Player),
                                     next_player(Player,NextPlayer),
-                                    %display_board(Board),
-                                    sleep(1),
+                                    display_board(Board),
                                     loop_game(Board,NextPlayer,Player1,Bot,BotPlayer,BotPlayer2,Difficulty).
 
 
@@ -162,14 +163,14 @@ ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Diffi
         Player \== BotPlayer1,
         write('PLAYER '), write(Player),nl,
         ask_new_position(Player,Board,NewBoard2,BotPlayer1,Bot),
-        check_game_state(NewBoard2,0,0,Player,Bot,BotPlayer1,BotPlayer2).
+        check_game_state(NewBoard2,0,0,Player,Bot,BotPlayer1,BotPlayer2,Difficulty).
 
 ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
         Bot == 'y',
         Player==BotPlayer1,
         write('PLAYER '), write(Player),nl,
         generate_random_move(Player,Board,NewBoard2,BotPlayer1),
-        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2).
+        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,1).
 
 
 ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
@@ -177,24 +178,13 @@ ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
         Player==BotPlayer2, 
         write('PLAYER '), write(Player),nl,
         generate_random_move(Player,Board,NewBoard2,BotPlayer2),
-        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2).
+        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,1).
 
-ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,2):-
+ask_new_play(Board, Player ,NextPlayer, NewBoard2,Bot,BotPlayer1,BotPlayer2,2):-
         Bot == 'y',
-        Player==BotPlayer1,
-        generate_best_move(Player,X,Y,NewX,NewY,1000,Board,NewBoard2,BotPlayer1,0),
-        write('aaaaaa'),display_board(NewBoard2),
-        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2).
-
-ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,2):-
-        Bot == 'y',
-        Player==BotPlayer2, 
         write('PLAYER '), write(Player),nl,
-        write(Player),nl, write(Board),nl, write(BotPlayer2),nl,
-        generate_best_move(Player,X,Y,NewX,NewY,1000,Board,NewBoard2,BotPlayer1,0),
-        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2).
-
-
+        Player==BotPlayer1,
+        generate_best_move(Player,X,Y,NewX,NewY,1000,Board,NewBoard2,BotPlayer1,BotPlayer2,0).
 
 loop_game(Board,Player,NextPlayer,Bot,BotPlayer1,BotPlayer2,Difficulty):-
                    ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Difficulty).
