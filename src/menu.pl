@@ -12,7 +12,7 @@ start_game(2):-initialBoard(Board),
 start_game(3):-initialBoard(Board),
                 display_board(Board),
                 choose_bot_player(BotPlayer),
-                loop_game(Board,1,NextPlayer,'y',BotPlayer,0,2).
+                loop_game(Board,1,NextPlayer,'y',1,0,2).
 
 /*COMPUTADOR VS COMPUTADOR*/
 start_game(4):-
@@ -26,6 +26,8 @@ main_menu:- /*write('1- JOGADOR VS JOGADOR'),nl,
             write('3- JOGADOR VS COMPUTADOR NIVEL 2'),nl,
             write('4- COMPUTADOR VS COMPUTADOR'),nl,
             write('INSERT YOUR OPTION: '),
-            read(Option),*/
+            read(Option),
+            start_game(3).*/
             start_game(3).
+
 

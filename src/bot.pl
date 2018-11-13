@@ -1,55 +1,52 @@
+
+
 generate_random_move(Player,Board,NewBoard2,BotPlayer):-
-    random(0,8,Row),
-    random(0,8,Column),
-    random(-1,2,IncrementRow),
-    random(-1,2,IncrementColumn),
-    NewRow is Row + IncrementRow,
-    NewColumn is Column + IncrementColumn,
-    validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,'y',BotPlayer,1).
+            valid_moves(Board,Player,ListOfMoves),
+            length(ListOfMoves,Size),
+            random(0,Size,Position),
+            get_value_from_list(ListOfMoves,Position,[X,Y,X1,Y1]),
+            validate_input(X,X1,Y,Y1,Player,Board,NewBoard2,'y',BotPlayer,1).
 
 
 choose_bot_player(Player):-
         random(1,3,Player).
 
-generate_best_move(Player,X,Y,NewX,NewY,NextPlayerMoves,Board,NewBoard2,BotPlayer,BotPlayer2,Try):-
-                            Try == 3,
-                            validate_input(X,NewX,Y,NewY,Player,Board,NewBoard2,'y',BotPlayer,2,Try),
-                            check_game_state(NewBoard2,0,0,Player,'y',BotPlayer,BotPlayer2,2).
 
-generate_best_move(Player,X,Y,NewX,NewY,NextPlayerMoves,Board,NewBoard2,BotPlayer,BotPlayer2,Try):-
-                            Try < 3,
-                            random(0,8,Row),
-                            random(0,8,Column),
-                            random(-1,2,IncrementRow),
-                            random(-1,2,IncrementColumn),
-                            NewRow is Row + IncrementRow,
-                            NewColumn is Column + IncrementColumn,
-                            check_possible_move(Player,X,Y,NewX,NewY,Row,Column,NewRow,NewColumn,NextPlayerMoves,Board,NewBoard2,BotPlayer,Try).
-check_possible_move(Player,X,Y,NewX,NewY,Row,Column,NewRow,NewColumn,NextPlayerMoves,Board,NewBoard2,BotPlayer,Try):-
-                            ActualBoard = Board,
-                            validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard,'y',BotPlayer,2,Try),    
-                            next_player(Player,NextPlayer),
-                            check_number_plays(NewBoard,0,0,NextPlayer,0,FinalNumber),
-                            verify_best_move(Player,X,Y,NewX,NewY,Row,Column,NewRow,NewColumn,NextPlayerMoves,FinalNumber,BestNumberMoves,ActualBoard,BotPlayer,Try).
+generate_best_move(Player,X,Y,NewX,NewY,Board,NewBoard2,BotPlayer,BotPlayer2):-
+                            valid_moves(Board,Player,ListOfMoves),
+                            length(ListOfMoves,Size),
+                            write(Size),nl,
+                            check_best_move(Board,X,Y,NewX,NewY,1000,ListOfMoves,0,Size,BotPlayer,Player).
 
-check_possible_move(Player,X,Y,NewX,NewY,Row,Column,NewRow,NewColumn,NextPlayerMoves,Board,NewBoard2,BotPlayer,Try):-
-                            ActualBoard = Board,
-                            \+validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard,'y',BotPlayer,2,Try),
-                            generate_best_move(Player,X,Y,NewX,NewY,NextPlayerMoves,ActualBoard,NewBoard2,BotPlayer,Try).
+check_best_move(Board,X,Y,NewX,NewY,BestNextPlay,ListOfMoves,CurrentPosition,Size,BotPlayer,Player):-
+                                                write('aaa'),
+                                                CurrentPosition == Size,
+                                                write(BestNextPlay),nl,
+                                                validate_input(X,NewX,Y,NewY,Player,Board,NewBoard2,'y',BotPlayer,2),
+                                                check_game_state(NewBoard2,0,0,Player,'y',BotPlayer,0,2).
+                                               
 
- verify_best_move(Player,X,Y,NewX,NewY,Row,Column,NewRow,NewColumn,OldNextPlayerMoves,ActualNextPlayerMoves,BestNumberMoves,ActualBoard, BotPlayer,Try):-
-                                                    OldNextPlayerMoves > ActualNextPlayerMoves,nl,
-                                                    BestNumberMoves1 is ActualNextPlayerMoves,
-                                                    X1 is Row,
-                                                    Y1 is Column,
-                                                    NewX1 is NewRow,
-                                                    NewY1 is NewColumn,
-                                                    Try1 is Try+1,
-                                                    generate_best_move(Player,X1,Y1,NewX1,NewY1,BestNumberMoves1,ActualBoard,NewBoard2,BotPlayer,Try1).
+check_best_move(Board,X,Y,NewX,NewY,BestNextPlay,ListOfMoves,CurrentPosition,Size,BotPlayer,Player):-
+                                                CurrentPosition < Size,                                               
+                                                get_value_from_list(ListOfMoves,CurrentPosition,[X1,Y1,X2,Y2]),
+                                                Board1 = Board,
+                                                validate_input(X1,X2,Y1,Y2,Player,Board,NewBoard,'y',BotPlayer,2),
+                                                next_player(Player,NextPlayer),
+                                                check_number_plays(NewBoard,0,0,NextPlayer,0,FinalNumber,[],List),
+                                                check_best_play(Board1,X,Y,NewX,NewY,X1,Y1,X2,Y2,BestNextPlay,ListOfMoves,CurrentPosition,Size,BotPlayer,Player,FinalNumber).
 
+                                                 
 
-verify_best_move(Player,X,Y,NewX,NewY,Row,Column,NewRow,NewColumn,OldNextPlayerMoves,ActualNextPlayerMoves,BestNumberMoves,ActualBoard,BotPlayer,Try):- 
-                                                                        BestNumberMoves1 is OldNextPlayerMoves,
-                                                                        Try1 is Try +1,
-                                                                        generate_best_move(Player,X,Y,NewX,NewY,BestNumberMoves1,ActualBoard,NewBoard2,BotPlayer,Try1).
-                                                                        
+check_best_play(Board,X,Y,NewX,NewY,X1,Y1,X2,Y2,BestNextPlay,ListOfMoves,CurrentPosition,Size,BotPlayer,Player,FinalNumber):-
+                                                CurrentPosition < Size,
+                                                FinalNumber < BestNextPlay,
+                                                CurrentPosition1 is CurrentPosition+1,
+                                                check_best_move(Board,X1,Y1,X2,Y2,FinalNumber,ListOfMoves,CurrentPosition1,Size,BotPlayer,Player).
+    
+check_best_play(Board,X,Y,NewX,NewY,X1,Y1,X2,Y2,BestNextPlay,ListOfMoves,CurrentPosition,Size,BotPlayer,Player,FinalNumber):-
+                                                FinalNumber >= BestNextPlay,
+                                                CurrentPosition1 is CurrentPosition+1,
+                                                check_best_move(Board,X,Y,NewX,NewY,BestNextPlay,ListOfMoves,CurrentPosition1,Size,BotPlayer,Player).
+                                        
+
+                
