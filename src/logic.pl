@@ -200,12 +200,12 @@ ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Diffi
         ask_new_position(Player,Board,NewBoard2,BotPlayer1,Bot),
         check_game_state(NewBoard2,0,0,Player,Bot,BotPlayer1,BotPlayer2,Difficulty).
 
-ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
+ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Difficulty):-
         Bot == 'y',
         Player==BotPlayer1,
         write('PLAYER '), write(Player),nl,
-        generate_random_move(Player,Board,NewBoard2,BotPlayer1),
-        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,1).
+        choose_move(Player,Board,NewBoard2,BotPlayer1,BotPlayer2,Difficulty),
+        check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,Difficulty).
 
 
 ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
@@ -215,12 +215,6 @@ ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
         generate_random_move(Player,Board,NewBoard2,BotPlayer2),
         check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,1).
 
-ask_new_play(Board, Player ,NextPlayer, NewBoard2,Bot,BotPlayer1,BotPlayer2,2):-
-        Bot == 'y',
-        write('PLAYER '), write(Player),nl,
-        Player==BotPlayer1,
-        write('before generate'),
-        generate_best_move(Player,X,Y,NewX,NewY,Board,NewBoard2,BotPlayer1,BotPlayer2).
 
 loop_game(Board,Player,NextPlayer,Bot,BotPlayer1,BotPlayer2,Difficulty):-
                    ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Difficulty).
