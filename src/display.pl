@@ -16,15 +16,6 @@ finalBoard([ [black,white,empty,empty,empty,empty,empty,empty],
                      [empty,empty,empty,empty,empty,empty,empty,empty],
                      [empty,empty,empty,empty,empty,empty,empty,empty]
 ]).
-
-aux([[black,empty,black],
-     [black,empty,black],
-     [black,empty,empty]]).
-
-
-
-/* Regras que convertem os nomes usados no tabuleiro para um so caracter,
-   de forma a tornar o jogo mais legível */
 translate(empty,'.').
 translate(black,'O').
 translate(white,'W').

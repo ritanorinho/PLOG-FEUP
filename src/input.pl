@@ -1,15 +1,25 @@
 insert_row(NumberRow):- read_row(Row),
-                 validate_row(Row,NumberRow).
+                        validate_row(Row,NumberRow).
+
+                        
+
 
 insert_column(NumberColumn):- read_column(Column),
                        validate_column(Column,NumberColumn).
 
 read_row(Row):- write('Row: '),nl,
-               read(Row).
+               read(Row),
+               integer(Row).
 
+read_row(Row):-  write('Row invalid! Your row must be an integer between 1-8!\n\n'),
+                 read_row(Row).
 read_column(Column):- 
                     write('Column: '),nl,
-                    read(Column).
+                    read(Column),
+                    atom(Column).
+
+read_column(Column):-    write('Column invalid! Your column must be a letter between 1-8!\n\n'),
+                         read_column(Column).
 
 validate_column(a,0).
 validate_column(b,1).
@@ -20,7 +30,7 @@ validate_column(f,5).
 validate_column(g,6).
 validate_column(h,7).
 validate_column(_Column,NumberColumn):- 
-    write('Column invalid! Please insert a column between A-H!\n\n'),
+    write('Column invalid! Please insert a column between a-h!\n\n'),
     read_column(Input),
     validate_column(Input, NumberColumn).
 
@@ -81,7 +91,7 @@ validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,
         show_positions(Row,NewRow,Column,NewColumn).
 
 validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,0) :-
-    write('Your new coordinates must be adjacent with actual position!\n'),
+    write('Your new coordinates must be adjacent with actual position and you only can move your pieces!!\n'),
     ask_new_position(Player,Board,NewBoard2,Bot,BotPlayer).
 
 ask_new_position(Player,Board,NewBoard2,Bot,BotPlayer):-
@@ -89,6 +99,7 @@ ask_new_position(Player,Board,NewBoard2,Bot,BotPlayer):-
         insert_column(Column),
         insert_row(NewRow),
         insert_column(NewColumn),
+        show_positions(Row,NewRow,Column,NewColumn),
         validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,0).
 
 
