@@ -40,11 +40,11 @@ get_value_from_matrix([_H|T],Row,Column,Value):-
     get_value_from_matrix(T,NewRow,Column,Value).
 /*percorrer o tabuleiro e a peça encontrada em (X,Y) não é a peça do jogador em questão (Piece1),
  portanto não se faz as verificações*/
-go_through_list([H|T],Piece1,Piece2,X,Y):-
+value([H|T],Piece1,Piece2,X,Y):-
                                 get_value_from_matrix([H|T],X,Y,Value),
                                 Value \= Piece1.
                            
-go_through_list([H|T],Piece1,Piece2,X,Y):-  
+value([H|T],Piece1,Piece2,X,Y):-  
                                 X1 is X-1,
                                 X2 is X+1,
                                 Y1 is Y-1,
@@ -57,20 +57,22 @@ go_through_list([H|T],Piece1,Piece2,X,Y):-
                                 (\+(get_value_from_matrix([H|T],X,Y2,Piece2))).
 
 /*quando chega ao final da linha tem que passar para a linha seguinte e a coluna volta a 0*/
-check_victory(Board,X,7,Player):- 
+game_over(Board,X,7,Player):- 
                             X1 is X+1,
                             Y is 0,
-                            check_victory(Board,X1,Y,Player).
+                            game_over(Board,X1,Y,Player).
 /*quando chega ao final do tabuleiro*/
-check_victory(Board,7,7,Player):- display_board(Board),write('Player '),write(Player),write(' won the game!!!\n').
+game_over(Board,7,7,Player):-display_board(Board),
+                            write('Player '),write(Player),write(' won the game!!!\n').
+
 /*verificar se jogador(Player) ganhou*/
-check_victory(Board, X,Y,Player):-
+game_over(Board, X,Y,Player):-
     player_piece(Player,Piece),
     next_player(Player,NextPlayer),
     player_piece(NextPlayer,Piece2),
-    go_through_list(Board,Piece,Piece2,X,Y),
+    value(Board,Piece,Piece2,X,Y),
     Y1 is Y+1,
-    check_victory(Board,X,Y1,Player).
+    game_over(Board,X,Y1,Player).
  
 /*Função para verificar se o jogador detentor das peças Piece1 na posição (X,Y)
  tem uma jogada possível para a célula imediatamente acima*/     
@@ -174,7 +176,6 @@ check_number_plays(Board,X,Y,Player,ActualNumber,FinalNumber,ActualList, ListOfM
                                                         verify_down_move(Board,X,Y,Piece1,Piece2,Number1,Number2,UpdatedList,UpdatedList1),                                                      
                                                         verify_left_move(Board,X,Y,Piece1,Piece2,Number2,Number3,UpdatedList1,UpdatedList2),
                                                         verify_right_move(Board,X,Y,Piece1,Piece2,Number3,Number4,UpdatedList2,UpdatedList3),
-                                                        %sleep(0.1),
                                                         Y1 is Y+1,
                                                         check_number_plays(Board,X,Y1,Player,Number4,FinalNumber,UpdatedList3,ListOfMoves).
 
@@ -182,12 +183,13 @@ valid_moves(Board,Player,ListOfMoves):-
                                                 check_number_plays(Board,0,0,Player,0,FinalNumber,[],ListOfMoves).
 
 check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2,Difficulty):-
-                                                                        check_victory(Board,X,Y,Player).
+                                                                        game_over(Board,X,Y,Player).
 
 check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2,Difficulty):-
-                                    \+check_victory(Board,X,Y,Player),
+                                    \+game_over(Board,X,Y,Player),
                                     next_player(Player,NextPlayer),
                                     display_board(Board),
+                                    sleep(0.5),
                                     loop_game(Board,NextPlayer,Player1,Bot,BotPlayer,BotPlayer2,Difficulty).
 
 
@@ -212,7 +214,7 @@ ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
         Bot == 'y',
         Player==BotPlayer2, 
         write('PLAYER '), write(Player),nl,
-        generate_random_move(Player,Board,NewBoard2,BotPlayer2),
+        choose_move(Player,Board,NewBoard2,BotPlayer1,BotPlayer2,Difficulty),
         check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,1).
 
 

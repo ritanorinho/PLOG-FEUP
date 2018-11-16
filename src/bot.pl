@@ -1,8 +1,7 @@
 
 
 
-choose_move(Player,Board,NewBoard2,BotPlayer1,BotPlayer2,1):- 
-                                                
+choose_move(Player,Board,NewBoard2,BotPlayer1,BotPlayer2,1):-
                                                 generate_random_move(Player,Board,NewBoard2,BotPlayer).
 
 
@@ -29,7 +28,6 @@ A partir da lista de jogadas possíveis, executa aquela que fará com que o joga
 generate_best_move(Player,X,Y,NewX,NewY,Board,NewBoard2,BotPlayer,BotPlayer2):-
                             valid_moves(Board,Player,ListOfMoves),
                             length(ListOfMoves,Size),
-                            write(Size),nl,
                             check_best_move(Board,NewBoard2,X,Y,NewX,NewY,1000,ListOfMoves,0,Size,BotPlayer,Player).
 /*Função que verifica se a jogada atual é melhor que a anterior*/
 check_best_move(Board,NewBoard2,X,Y,NewX,NewY,BestNextPlay,ListOfMoves,CurrentPosition,Size,BotPlayer,Player):-
