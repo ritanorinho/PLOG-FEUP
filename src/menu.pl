@@ -34,6 +34,9 @@ start_game(6):-
 /* Vai para o menu de informacoes */
 start_game(7):- about_menu.
 
+/* Sai do jogo */
+start_game(8):- write('Leaving the game...').
+
 /* No caso de haver algum input invalido */
 start_game(_Option):- write('Error:: invalid input.'),nl,
                       write('INSERT YOUR OPTION: '),
@@ -42,6 +45,7 @@ start_game(_Option):- write('Error:: invalid input.'),nl,
                       start_game(Option).
 
 go_to_menu(1):-main_menu.
+go_to_menu(2):- write('Leaving the game...').
 go_to_menu(_Option):- write('Error:: invalid input.'),nl,
                       write('INSERT YOUR OPTION: '),
                       read(Option),
@@ -73,7 +77,7 @@ main_menu:- write('|------------------------------------------------------------
             write('|         |       5- COMPUTADOR VS JOGADOR NIVEL 2         |         |'),nl,
             write('|         |         6- COMPUTADOR VS COMPUTADOR            |         |'),nl,
             write('|         |                   7- ABOUT                     |         |'),nl,
-            write('|         |                                                |         |'),nl,
+            write('|         |                   8- Exit                      |         |'),nl,
             write('|         --------------------------------------------------         |'),nl, 
             write('|                                                                    |'),nl,
             write('|                                                                    |'),nl,
@@ -113,6 +117,7 @@ about_menu:-write('|------------------------------------------------------------
             write('|                                                                    |'),nl,
             write('|                                                                    |'),nl,
             write('|                    1- Ir para o menu princial                      |'),nl,
+            write('|                              2- Exit                               |'),nl,
             write('|--------------------------------------------------------------------|'),nl,
             write('INSERT YOUR OPTION: '),
             read(Option),
