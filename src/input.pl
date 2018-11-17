@@ -55,7 +55,7 @@ validate_move(Row,NewRow,Column,NewColumn,Player,Board,BotPlayer):-
         next_player(Player,NextPlayer),
         player_piece(NextPlayer,NextPiece),
         Value1 == NextPiece.
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,Difficulty):-
+move(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,Difficulty):-
         Row == NewRow,
         NewColumn =:= Column +1,
         validate_move(Row,NewRow,Column,NewColumn,Player,Board,BotPlayer),
@@ -63,7 +63,7 @@ validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,
         replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
         replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2),
         show_positions(Row,NewRow,Column,NewColumn).
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,Difficulty):-
+move(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,Difficulty):-
        
         Row==NewRow,
         NewColumn =:= Column - 1,
@@ -72,7 +72,7 @@ validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,
         replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
         replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2),
         show_positions(Row,NewRow,Column,NewColumn).
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,Difficulty):-
+move(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,Difficulty):-
         
         Column==NewColumn,
          NewRow =:= Row -1,
@@ -81,7 +81,7 @@ validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,
         replace_in_matrix(Board,NewRow,NewColumn,Piece,NewBoard),
         replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2),
         show_positions(Row,NewRow,Column,NewColumn).
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,Difficulty):-
+move(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,Difficulty):-
         Column==NewColumn,
         NewRow =:= Row + 1,
         validate_move(Row,NewRow,Column,NewColumn,Player,Board,BotPlayer),
@@ -90,7 +90,7 @@ validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,
         replace_in_matrix(NewBoard,Row,Column,'empty',NewBoard2),
         show_positions(Row,NewRow,Column,NewColumn).
 
-validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,0) :-
+move(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,0) :-
     write('Your new coordinates must be adjacent with actual position and you only can move your pieces!!\n'),
     ask_new_position(Player,Board,NewBoard2,Bot,BotPlayer).
 
@@ -100,7 +100,7 @@ ask_new_position(Player,Board,NewBoard2,Bot,BotPlayer):-
         insert_row(NewRow),
         insert_column(NewColumn),
         show_positions(Row,NewRow,Column,NewColumn),
-        validate_input(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,0).
+        move(Row,NewRow,Column,NewColumn,Player,Board,NewBoard2,Bot,BotPlayer,0).
 
 
 show_positions(Row,NewRow,Column,NewColumn):-
