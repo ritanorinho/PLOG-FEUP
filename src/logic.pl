@@ -202,21 +202,22 @@ ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Diffi
         ask_new_position(Player,Board,NewBoard2,BotPlayer1,Bot),
         check_game_state(NewBoard2,0,0,Player,Bot,BotPlayer1,BotPlayer2,Difficulty).
 
+
+
+
 ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Difficulty):-
         Bot == 'y',
-        Player==BotPlayer1,
+        Player==BotPlayer1, 
         write('PLAYER '), write(Player),nl,
         choose_move(Player,Board,NewBoard2,BotPlayer1,BotPlayer2,Difficulty),
         check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,Difficulty).
 
-
 ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
         Bot == 'y',
-        Player==BotPlayer2, 
+        Player==BotPlayer2,
         write('PLAYER '), write(Player),nl,
-        choose_move(Player,Board,NewBoard2,BotPlayer1,BotPlayer2,Difficulty),
+        generate_random_move(Player,Board,NewBoard2,BotPlayer1),
         check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,1).
-
 
 loop_game(Board,Player,NextPlayer,Bot,BotPlayer1,BotPlayer2,Difficulty):-
                    ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Difficulty).
