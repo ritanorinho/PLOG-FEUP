@@ -74,8 +74,8 @@ game_over(Board, X,Y,Player):-
     Y1 is Y+1,
     game_over(Board,X,Y1,Player).
  
-/*Função para verificar se o jogador detentor das peças Piece1 na posição (X,Y)
- tem uma jogada possível para a célula imediatamente acima*/     
+/*Predicado que verifica se o jogador detentor das peças Piece1 na posição (X,Y)
+ tem uma jogada possível para a célula imediatamente acima. Se for, atualiza a lista de jogadas possíveis e incrementa o número das mesmas*/     
 verify_up_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,UpdatedList):-  
                                                                     get_value_from_matrix([H|T],X,Y,Value),
                                                                     Value \= Piece1,
@@ -93,8 +93,8 @@ verify_up_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,UpdatedLis
                                                                         ActualNumber is Number,
                                                                         UpdatedList=ActualList.
                                                                             
-/*Função para verificar se o jogador detentor das peças Piece1 na posição (X,Y)
- tem uma jogada possível para a célula imediatamente abaixo*/ 
+/*Predicado que  verifica se o jogador detentor das peças Piece1 na posição (X,Y)
+ tem uma jogada possível para a célula imediatamente abaixo. Se for, atualiza a lista de jogadas possíveis e incrementa o número das mesmas*/ 
      verify_down_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,UpdatedList):-  
                                                                     get_value_from_matrix([H|T],X,Y,Value),
                                                                     Value \= Piece1,
@@ -110,8 +110,8 @@ verify_up_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,UpdatedLis
     verify_down_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,UpdatedList):- 
                                                                         ActualNumber is Number,
                                                                         UpdatedList=ActualList.
-  /*Função para verificar se o jogador detentor das peças Piece1 na posição (X,Y)
- tem uma jogada possível para a célula imediatamente à esquerda*/                                                                         
+  /*Predicado que verifica se o jogador detentor das peças Piece1 na posição (X,Y)
+ tem uma jogada possível para a célula imediatamente à esquerda. Se for, atualiza a lista de jogadas possíveis e incrementa o número das mesmas*/                                                                         
     
     verify_left_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,UpdatedList):-  
                                                                     
@@ -134,7 +134,7 @@ verify_left_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,UpdatedL
                                                                         ActualNumber is Number,
                                                                         UpdatedList=ActualList.
 /*Função para verificar se o jogador detentor das peças Piece1 na posição (X,Y)
- tem uma jogada possível para a célula imediatamente à direita*/ 
+ tem uma jogada possível para a célula imediatamente à direita. Se for, atualiza a lista de jogadas possíveis e incrementa o número das mesmas*/ 
  verify_right_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,UpdatedList):-  
                                                                    
                                                                     get_value_from_matrix([H|T],X,Y,Value),
@@ -158,7 +158,7 @@ verify_right_move([H|T],X,Y,Piece1,Piece2,Number,ActualNumber,ActualList,Updated
                                                                 UpdatedList=ActualList.
     
     
-/*Função para calcular o número de jogadas possíveis e a lista das mesmas de um determinado jogador*/
+/*Predicado que calcula o número de jogadas possíveis e a lista das mesmas de um determinado jogador*/
 check_number_plays(Board,7,8,Player,ActualNumber,FinalNumber,ActualList,ListOfMoves):- FinalNumber is ActualNumber,
                                                                                        ListOfMoves=ActualList.
                                                                                          
@@ -179,9 +179,12 @@ check_number_plays(Board,X,Y,Player,ActualNumber,FinalNumber,ActualList, ListOfM
                                                         Y1 is Y+1,
                                                         check_number_plays(Board,X,Y1,Player,Number4,FinalNumber,UpdatedList3,ListOfMoves).
 
+/*Predicado que devolve uma lista de todas a jogadas possíveis de um determinado jogador a partir do tabuleiro*/
 valid_moves(Board,Player,ListOfMoves):- 
                                                 check_number_plays(Board,0,0,Player,0,FinalNumber,[],ListOfMoves).
 
+/*Cláusula que verifica o estado do jogo, através de uma chamada ao predicado game_over. 
+Se este for verdadeiro, termina a execução. Se não, é atualizado o jogador e chamado o loop_game com o jogador atualizado e o tabuleiro*/
 check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2,Difficulty):-
                                                                         game_over(Board,X,Y,Player).
 
@@ -193,7 +196,13 @@ check_game_state(Board,X,Y,Player,Bot,BotPlayer,BotPlayer2,Difficulty):-
                                     loop_game(Board,NextPlayer,Player1,Bot,BotPlayer,BotPlayer2,Difficulty).
 
 
-
+/*Predicado responsável que pede uma jogada ao jogador. 
+ Verifica o tipo de jogo (Se bot_player2= 0 significa que não é computador vs computador).
+ Verifica se existe algum bot a jogar (Se bot ='y').
+ Verifica a dificuldade.
+ No caso de ser um jogador que não o computador, então o botPlayer2 tem que ser 0 e o jogador tem que ser diferente do botPlayer1.
+ Quando é um jogador contra o outro ambos os BotPlayers são 0.
+ Por fim, é verificado o estado do jogo depois da jogada executada.*/
 
 ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Difficulty):-
         BotPlayer2 == 0,
@@ -203,7 +212,8 @@ ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Diffi
         check_game_state(NewBoard2,0,0,Player,Bot,BotPlayer1,BotPlayer2,Difficulty).
 
 
-
+/*Bot ='y', logo existe pelo menos um computador a jogar. Player == BotPlayer1 significa que é a vez do computador jogar
+É feita a chamada à função choose_move para definir qual o nivel de dificuldade.*/
 
 ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Difficulty):-
         Bot == 'y',
@@ -211,13 +221,13 @@ ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Diffi
         write('PLAYER '), write(Player),nl,
         choose_move(Player,Board,NewBoard2,BotPlayer1,BotPlayer2,Difficulty),
         check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,Difficulty).
-
+/*Quando são dois computadores a jogar e é a vez do segundo jogar. O nível é sempre o 1*/
 ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,1):-
         Bot == 'y',
         Player==BotPlayer2,
         write('PLAYER '), write(Player),nl,
         generate_random_move(Player,Board,NewBoard2,BotPlayer1),
         check_game_state(NewBoard2,0,0,Player,'y',BotPlayer1,BotPlayer2,1).
-
+/*Predicado esponsável pelo loop do jogo.  */
 loop_game(Board,Player,NextPlayer,Bot,BotPlayer1,BotPlayer2,Difficulty):-
                    ask_new_play(Board, Player ,NextPlayer, NewBoard,Bot,BotPlayer1,BotPlayer2,Difficulty).
