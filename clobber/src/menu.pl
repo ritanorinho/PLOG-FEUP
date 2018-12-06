@@ -6,7 +6,7 @@ start_game(1):-
 
 
 /*JOGADOR VS COMPUTADOR NIVEL 1*/
-start_game(2):-initialBoard(Board),
+start_game(2):-finalBoard(Board),
                 display_board(Board),
                 loop_game(Board,1,NextPlayer,'y',2,0,1).
 
