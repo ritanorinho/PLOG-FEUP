@@ -28,10 +28,11 @@ analyze_groups(Groups,Grades,NumberGroups).
 groups(NumberStudents):-class1(X),
                         class2(Y),
                         length(Groups1,NumberStudents),
-                        NumberGroups #= NumberStudents / 4, 
+                        calculate_number_groups(NumberStudents,Groups4,Groups3), 
+                        NumberGroups #= Groups3+Groups4,
                         domain(Groups1,1,NumberGroups),
-                        Number #= NumberGroups + 1,
-                        list_global(1,Number,[],FinalList),
+                        list_global(0,Groups3,3,[],List),
+                        list_global(Groups3,NumberGroups,4,List,FinalList),
                         global_cardinality(Groups1,FinalList),
                         duos(Groups1,1,X,Y),
                         labeling([],Groups1),write(Groups1),
@@ -39,23 +40,17 @@ groups(NumberStudents):-class1(X),
                         domain(Groups2,1,NumberGroups),
                         global_cardinality(Groups2,FinalList),
                         duos(Groups2,1,Groups1,Y),
-                        labeling([],Groups2),write('\n'),write(Groups2).
+                        labeling([],Groups2),write('\n'),write(Groups2). 
 
 
 
-list_global(NumberGroups,NumberGroups,FinalList,FinalList).
-list_global(CurrPosition,NumberGroups,CurrList,FinalList):-
+list_global(CurrPosition,NumberGroups,NumberElements,FinalList,FinalList):- CurrPosition >= NumberGroups.
+list_global(CurrPosition,NumberGroups,NumberElements,CurrList,FinalList):-
                                                            CurrPosition < NumberGroups,                                          
                                                            CurrPosition1 is CurrPosition+1,
-                                                           X in 3..4,
-                                                           append(CurrList,[CurrPosition-X],CurrList1),
-                                                           list_global(CurrPosition1,NumberGroups,CurrList1,FinalList).
+                                                           append(CurrList,[CurrPosition1-NumberElements],CurrList1),
+                                                           list_global(CurrPosition1,NumberGroups,NumberElements,CurrList1,FinalList).
 
-calculate_number_groups(Students,Number4,Number3):- NumberGroups is Students mod 4,
-                                                    N3 is NumberGroups mod 3,
-                                                    N3 == 0,
-                                                    Number3 is floor(NumberGroups / 3),
-                                                    Number4 is floor(Students / 4).
 
 duos([_,_],Index,_,_).
 duos([A,B|T],Index,X,Y):- 
@@ -67,3 +62,16 @@ duos([A,B|T],Index,X,Y):-
                       Index2 #= Index1 + 1,
                       (A #\= B #\/ ((A #\= Val1 #/\ A #\=ValY1) #/\(B #\= Val2 #/\ B #\= ValY2))),
                       duos(T,Index2,X,Y).
+
+
+
+calculate_number_groups(Students,NumberGroups4,NumberGroups3):- 
+                  Values=[NumberGroups4,NumberGroups3],
+                  NumberGroups3 in 0..Students,
+                  NumberGroups4 in 0..Students,
+                  Students #= NumberGroups3 * 3 + NumberGroups4 * 4,
+                  NumberGroups3 #=< NumberGroups4,
+                  labeling([],Values).
+
+                                          
+                                           
