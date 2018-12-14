@@ -1,9 +1,9 @@
 :-use_module(library(clpfd)).
 :-use_module(library(random)).
-:-use_module(library(list)).
+:-use_module(library(lists)).
 :-use_module(library(samsort)).
 
-class1([1,1,1,1,2,2,1,2,3,4,3,4,3,4,3,4]).
+class1([1,1,1,1,2,2,2,2,3,4,3,4,3,4,3,4]).
 class2([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4]).
 
 
@@ -26,7 +26,6 @@ analyze_groups(Groups,Grades,NumberGroups).
 
 
 groups(NumberStudents):-class1(X),
-                        class2(Y),
                         length(Groups1,NumberStudents),
                         calculate_number_groups(NumberStudents,Groups4,Groups3), 
                         NumberGroups #= Groups3+Groups4,
@@ -34,13 +33,14 @@ groups(NumberStudents):-class1(X),
                         list_global(0,Groups3,3,[],List),
                         list_global(Groups3,NumberGroups,4,List,FinalList),
                         global_cardinality(Groups1,FinalList),
-                        duos(Groups1,1,X,Y),
-                        labeling([],Groups1),write(Groups1),
+                        count_repetitions(Groups1,Acc,X),
+                        labeling([minimize(Acc)],Groups1),write(X),nl,write(Groups1),nl,
                         length(Groups2,NumberStudents),
                         domain(Groups2,1,NumberGroups),
                         global_cardinality(Groups2,FinalList),
-                        duos(Groups2,1,Groups1,Y),
-                        labeling([],Groups2),write('\n'),write(Groups2). 
+                        count_repetitions(Groups2,Acc1,X),
+                        go_through_class(Groups2,Groups1),
+                        labeling([minimize(Acc1)],Groups2),write(Groups2). 
 
 
 
@@ -52,16 +52,31 @@ list_global(CurrPosition,NumberGroups,NumberElements,CurrList,FinalList):-
                                                            list_global(CurrPosition1,NumberGroups,NumberElements,CurrList1,FinalList).
 
 
-duos([_,_],Index,_,_).
-duos([A,B|T],Index,X,Y):- 
-                      element(Index,X,Val1),
-                      element(Index,Y,ValY1),
+go_through_class([_],_).
+go_through_class([H|T],X):-duos([H|T],2,X),
+                           go_through_class(T,X).
+
+duos([_,_],Index,_).
+duos([A,B,C|T],Index,X):- 
+                      element(1,X,Val1),
+                      element(Index,X,Val2),
                       Index1 #= Index + 1,
-                      element(Index1,X,Val2),
-                      element(Index1,Y,ValY2),
-                      Index2 #= Index1 + 1,
-                      (A #\= B #\/ ((A #\= Val1 #/\ A #\=ValY1) #/\(B #\= Val2 #/\ B #\= ValY2))),
-                      duos(T,Index2,X,Y).
+                      ((A #\= B) #\/ Val1 #\= Val2),
+                      duos([A,C|T],Index1,X).
+
+
+count_repetitions([_],0,X).
+
+count_repetitions([H|T],Acc,X):- repetitions([H|T],X,Acc1,1),
+                                 count_repetitions(T,Acc2,X),
+                                 Acc #= Acc2+Acc1.
+repetitions([_,_],_,0,_).
+repetitions([A,B,C|T],X,Acc,Index):-     Index1 #= Index + 1,                                         
+                                         repetitions([A,C|T],X,Acc1,Index1),
+                                         element(1,X,Val1),
+                                         element(Index1,X,Val2),
+                                         (Val1 #= Val2 #/\ A #=B)#<=>Bin,
+                                         Acc #= Acc1 + Bin.
 
 
 
