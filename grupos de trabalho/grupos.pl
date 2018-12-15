@@ -37,15 +37,26 @@ groups(NumberStudents):-class1(X),
                         global_cardinality(Groups1,FinalList),
                         count_repetitions(Groups1,Acc,X),length(AverageGrades,NumberGroups),
                         calculate_average_grades(Groups1,ListGrades,FinalGroups,1,NumberGroups,AverageGrades),
-                        labeling([minimize(Acc)],Groups1),write(AverageGrades),nl,write(Acc),nl,write(X),nl,write(Groups1),nl,
+                        distance_between_grades(AverageGrades,[],DiffGrades),
+                        maximum(Max,DiffGrades),
+                        labeling([minimize(Acc),minimize(Max)],Groups1),nl,write(AverageGrades),nl,write(Acc),nl,write(X),nl,write(Groups1),nl,
                         length(Groups2,NumberStudents),
                         domain(Groups2,1,NumberGroups),
                         global_cardinality(Groups2,FinalList),
                         count_repetitions(Groups2,Acc1,X),
                         count_repetitions(Groups2,0,Groups1),length(AverageGrades1,NumberGroups),
                         calculate_average_grades(Groups2,ListGrades,FinalGroups,1,NumberGroups,AverageGrades1),
-                        labeling([minimize(Acc1)],Groups2),write(AverageGrades1),nl,write(Acc1),nl,write(X),nl,write(Groups2). 
+                        distance_between_grades(AverageGrades1,[],DiffGrades1),
+                        maximum(Max1,DiffGrades1),
+                        labeling([minimize(Acc1),minimize(Max1)],Groups2),write(AverageGrades1),nl,write(Acc1),nl,write(X),nl,write(Groups2). 
 
+distance_between_grades([A,B],CurrList,FinalList):- Diff #= abs(B-A),
+                                                   append(CurrList,[Diff],CurrList1),
+                                                   FinalList = CurrList1.
+distance_between_grades([A,B,C|T],CurrList,FinalList):- 
+                                                          Diff #= abs(B-A),
+                                                          append(CurrList,[Diff],CurrList1),
+                                                          distance_between_grades([A,C|T],CurrList1,FinalList).
 
 
 list_global(CurrPosition,NumberGroups,NumberElements,FinalList,FinalList,ListGroups,ListGroups):- CurrPosition >= NumberGroups.
