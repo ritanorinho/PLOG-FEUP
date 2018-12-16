@@ -23,10 +23,11 @@ generate_groups([H|T],Index,FinalList,Minimum,Maximum):-
                   append(FinalList,[H],FinalList1),
                   generate_groups(T,Index1,FinalList1,Minimum,Maximum).
 
-analyze_groups(Groups,Grades,NumberGroups).
 
 
-groups(NumberStudents):-class1(X),
+
+groups(NumberStudents):- statistics(walltime, [Start,_]),
+                        class1(X),
                         generate_grades(NumberStudents,CurrGrades,ListGrades),write(ListGrades),nl,
                         length(Groups1,NumberStudents),
                         calculate_number_groups(NumberStudents,Groups4,Groups3), 
@@ -37,18 +38,21 @@ groups(NumberStudents):-class1(X),
                         global_cardinality(Groups1,FinalList),
                         count_repetitions(Groups1,Acc,X),length(AverageGrades,NumberGroups),
                         calculate_average_grades(Groups1,ListGrades,FinalGroups,1,NumberGroups,AverageGrades),
-                        distance_between_grades(AverageGrades,[],DiffGrades),
+                        general_distance_between_grades(AverageGrades,[],DiffGrades),
                         maximum(Max,DiffGrades),
-                        labeling([minimize(Acc),minimize(Max)],Groups1),nl,write(AverageGrades),nl,write(Acc),nl,write(X),nl,write(Groups1),nl,
+                        labeling([minimize(Max),minimize(Acc)],Groups1),nl,write(AverageGrades),nl,write(Acc),nl,write(X),nl,write(Groups1),nl,
                         length(Groups2,NumberStudents),
                         domain(Groups2,1,NumberGroups),
                         global_cardinality(Groups2,FinalList),
                         count_repetitions(Groups2,Acc1,X),
                         count_repetitions(Groups2,0,Groups1),length(AverageGrades1,NumberGroups),
                         calculate_average_grades(Groups2,ListGrades,FinalGroups,1,NumberGroups,AverageGrades1),
-                        distance_between_grades(AverageGrades1,[],DiffGrades1),
+                        general_distance_between_grades(AverageGrades1,[],DiffGrades1),
                         maximum(Max1,DiffGrades1),
-                        labeling([minimize(Acc1),minimize(Max1)],Groups2),write(AverageGrades1),nl,write(Acc1),nl,write(X),nl,write(Groups2). 
+                        labeling([minimize(Max1),minimize(Acc1)],Groups2),write(AverageGrades1),nl,write(Acc1),nl,write(X),nl,write(Groups2),
+                        statistics(walltime, [End,_]),
+	                      Time is End - Start,
+                        format(' > Duration: ~3d s~n', [Time]).
 
 distance_between_grades([A,B],CurrList,FinalList):- Diff #= abs(B-A),
                                                    append(CurrList,[Diff],CurrList1),
@@ -57,6 +61,12 @@ distance_between_grades([A,B,C|T],CurrList,FinalList):-
                                                           Diff #= abs(B-A),
                                                           append(CurrList,[Diff],CurrList1),
                                                           distance_between_grades([A,C|T],CurrList1,FinalList).
+
+general_distance_between_grades([_],FinalList,FinalList).
+
+general_distance_between_grades([H|T],CurrList,FinalList):- distance_between_grades([H|T],[],FinalList1),
+                                                            append(CurrList,FinalList1,CurrList1),
+                                                            general_distance_between_grades(T,CurrList1,FinalList).
 
 
 list_global(CurrPosition,NumberGroups,NumberElements,FinalList,FinalList,ListGroups,ListGroups):- CurrPosition >= NumberGroups.
