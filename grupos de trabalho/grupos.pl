@@ -4,7 +4,7 @@
 :-use_module(library(samsort)).
 
 class1([1,1,1,1,2,2,2,2,3,4,3,4,3,4,3,4]).
-class2([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4]).
+class2([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4,5,5,5]).
 class3([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]).
 
 
@@ -15,20 +15,27 @@ generate_grades(Index,CurrList,FinalList):-
                   random(10,20,H),
                   append(CurrList,[H],CurrList1),
                   generate_grades(Index1,CurrList1,FinalList),!.
-generate_groups([],0,_,Minimum,Maximum).
-generate_groups([H|T],Index,FinalList,Minimum,Maximum):-
-                  Index > 0,
-                  Index1 is Index-1,
-                  random(Minimum,Maximum,H),
-                  append(FinalList,[H],FinalList1),
-                  generate_groups(T,Index1,FinalList1,Minimum,Maximum).
+
+output(ListGrades,X,Groups1,AverageGrades,Groups2,AverageGrades1,Time):-
+                                        write('Grades'> ListGrades),nl,
+                                        write('Other class groups' > X),nl,
+                                        write('First work groups' > Groups1),nl,
+                                        write('First work groups average grades' > AverageGrades),nl,
+                                        write('Second work groups' > Groups2),nl,
+                                        write('Second work groups average grades' > AverageGrades1),nl,
+                                        format(' > Duration: ~3d s~n', [Time]),nl.
+                                       
 
 
 
 
-groups(NumberStudents):- statistics(walltime, [Start,_]),
-                        class1(X),
-                        generate_grades(NumberStudents,CurrGrades,ListGrades),write(ListGrades),nl,
+
+
+
+groups(NumberStudents):- write('Processing...'),nl, 
+                        statistics(walltime, [Start,_]),
+                        class2(X),
+                        generate_grades(NumberStudents,CurrGrades,ListGrades),
                         length(Groups1,NumberStudents),
                         calculate_number_groups(NumberStudents,Groups4,Groups3), 
                         NumberGroups #= Groups3+Groups4,
@@ -40,7 +47,8 @@ groups(NumberStudents):- statistics(walltime, [Start,_]),
                         calculate_average_grades(Groups1,ListGrades,FinalGroups,1,NumberGroups,AverageGrades),
                         general_distance_between_grades(AverageGrades,[],DiffGrades),
                         maximum(Max,DiffGrades),
-                        labeling([minimize(Max),minimize(Acc)],Groups1),nl,write(AverageGrades),nl,write(Acc),nl,write(X),nl,write(Groups1),nl,
+                        Metric #= abs(Max + Acc) /2,
+                        labeling([minimize(Metric)],Groups1),
                         length(Groups2,NumberStudents),
                         domain(Groups2,1,NumberGroups),
                         global_cardinality(Groups2,FinalList),
@@ -49,11 +57,11 @@ groups(NumberStudents):- statistics(walltime, [Start,_]),
                         calculate_average_grades(Groups2,ListGrades,FinalGroups,1,NumberGroups,AverageGrades1),
                         general_distance_between_grades(AverageGrades1,[],DiffGrades1),
                         maximum(Max1,DiffGrades1),
-                        labeling([minimize(Max1),minimize(Acc1)],Groups2),write(AverageGrades1),nl,write(Acc1),nl,write(X),nl,write(Groups2),
+                         Metric1 #= abs(Max1 + Acc1) /2,
+                        labeling([minimize(Metric1)],Groups2),
                         statistics(walltime, [End,_]),
 	                      Time is End - Start,
-                        format(' > Duration: ~3d s~n', [Time]).
-
+                        output(ListGrades,X,Groups1,AverageGrades,Groups2,AverageGrades1,Time).
 distance_between_grades([A,B],CurrList,FinalList):- Diff #= abs(B-A),
                                                    append(CurrList,[Diff],CurrList1),
                                                    FinalList = CurrList1.
@@ -104,7 +112,6 @@ repetitions([A,B],[X1,X2],Acc):- (X1 #= X2 #/\ A #=B)#<=>Bin, Acc #= Bin.
 repetitions([A,B,C|T],[X1,X2,X3|X],Acc):-                                             
                                          repetitions([A,C|T],[X1,X3|X],Acc1),
                                          (X1 #= X2 #/\ A #=B)#<=>Bin,
-                                         %write('['),write(X1),write(','), write(X2),write(']'),nl,
                                          Acc #= Acc1 + Bin.
 
 
