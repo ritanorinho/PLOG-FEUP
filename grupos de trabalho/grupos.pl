@@ -1,14 +1,27 @@
 :-use_module(library(clpfd)).
 :-use_module(library(random)).
 :-use_module(library(lists)).
-:-use_module(library(samsort)).
 
-class1([1,1,1,1,2,2,2,2,3,4,3,4,3,4,3,4]).
-class2([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4,5,5,5]).
-class3([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]).
+class1([1,1,1,2,2,2,3,3,3]).
+class2([1,1,2,2,4,4,5,5,1,2,3,4]).
+class3([1,1,1,3,2,2,4,2,3,4,3,4,3,4]).
+class4([1,3,4,3,4,1,2,2,1,1,2,2,3,3,4]).
+class5([1,1,1,1,2,2,2,2,3,4,3,4,3,4,3,4]).
+class6([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]).
+class7([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4,5,5,5,5]).
+class8([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4,5,5,6,5,5,6,6,6]).
+class9([1,1,1,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7]).
 
+grades1([15,11,13,13,14,13,14,15,16]). % 9 alunos
+grades2([12,16,17,13,12,13,18,16,12,18,12,19]).%12 alunos
+grades3([14,11,10,12,17,13,12,18,12,15,18,19,18,11]). % 14 alunos
+grades4([13,12,18,18,11,14,11,10,12,15,12,19,18,19,17]). %15 alunos
+grades5([12,11,10,12,17,11,12,18,12,15,18,10,18,11,17,12]). % 16 alunos
+grades6([15,17,17,19,15,10,12,17,11,15,11,19,15,16,18,13,14,10]). %18 alunos
+grades7([13,11,13,19,15,12,15,13,14,11,18,14,11,17,14,18,11,18,19,20]). %20 alunos
+grades8([10,13,16,15,10,12,18,13,19,14,14,10,17,14,12,19,11,19,19,12,13,13,14,15]). %24alunos
 
-generate_grades(0,FinalList,FinalList).
+generate_grades(0,FinalList,FinalList):- write(FinalList).
 generate_grades(Index,CurrList,FinalList):-
                   Index > 0,
                   Index1 is Index-1,
@@ -17,27 +30,21 @@ generate_grades(Index,CurrList,FinalList):-
                   generate_grades(Index1,CurrList1,FinalList),!.
 
 output(ListGrades,X,Groups1,AverageGrades,Groups2,AverageGrades1,Time):-
-                                        write('Grades'> ListGrades),nl,
-                                        write('Other class groups' > X),nl,
-                                        write('First work groups' > Groups1),nl,
-                                        write('First work groups average grades' > AverageGrades),nl,
-                                        write('Second work groups' > Groups2),nl,
-                                        write('Second work groups average grades' > AverageGrades1),nl,
+                                        write('Grades > ') , write(ListGrades),nl,
+                                        write('Other class groups > ') , write(X),nl,
+                                        write('First work groups > '),write(Groups1),nl,
+                                        write('First work groups average grades > '), write(AverageGrades),nl,
+                                        write('Second work groups > ' ), write(Groups2),nl,
+                                        write('Second work groups average grades > '), write(AverageGrades1),nl,
                                         format(' > Duration: ~3d s~n', [Time]),nl.
                                        
 
-
-
-
-
-
-
-groups(NumberStudents):- write('Processing...'),nl, 
+groups(NumberStudents,NumberThemes):- write('Processing...'),nl, 
                         statistics(walltime, [Start,_]),
-                        class2(X),
-                        generate_grades(NumberStudents,CurrGrades,ListGrades),
+                        class8(X),
+                        grades8(ListGrades),
                         length(Groups1,NumberStudents),
-                        calculate_number_groups(NumberStudents,Groups4,Groups3), 
+                        calculate_number_groups(NumberStudents,Groups4,Groups3,NumberThemes), 
                         NumberGroups #= Groups3+Groups4,
                         domain(Groups1,1,NumberGroups),
                         list_global(0,Groups3,3,[],List,[],CurrentGroups),
@@ -47,21 +54,24 @@ groups(NumberStudents):- write('Processing...'),nl,
                         calculate_average_grades(Groups1,ListGrades,FinalGroups,1,NumberGroups,AverageGrades),
                         general_distance_between_grades(AverageGrades,[],DiffGrades),
                         maximum(Max,DiffGrades),
-                        Metric #= abs(Max + Acc) /2,
-                        labeling([minimize(Metric)],Groups1),
+                        Metric #= 3*Max / 4 + Acc /4,
                         length(Groups2,NumberStudents),
                         domain(Groups2,1,NumberGroups),
                         global_cardinality(Groups2,FinalList),
-                        count_repetitions(Groups2,Acc1,X),
                         count_repetitions(Groups2,0,Groups1),length(AverageGrades1,NumberGroups),
+                        count_repetitions(Groups2,Acc1,X),
                         calculate_average_grades(Groups2,ListGrades,FinalGroups,1,NumberGroups,AverageGrades1),
                         general_distance_between_grades(AverageGrades1,[],DiffGrades1),
                         maximum(Max1,DiffGrades1),
-                         Metric1 #= abs(Max1 + Acc1) /2,
-                        labeling([minimize(Metric1)],Groups2),
+                        Metric1 #= 3* Max1 / 4 + Acc1 / 4,
+                        TotalMetrics #= Metric1+Metric,
+                        append(Groups1,Groups2,TotalGroups),
+                        labeling([minimize(TotalMetrics),time_out(70000,_)],TotalGroups),write('Repetions > '), write(Acc1),nl,write('Repetions > '), write(Acc),nl,
                         statistics(walltime, [End,_]),
 	                      Time is End - Start,
+                        fd_statistics,
                         output(ListGrades,X,Groups1,AverageGrades,Groups2,AverageGrades1,Time).
+
 distance_between_grades([A,B],CurrList,FinalList):- Diff #= abs(B-A),
                                                    append(CurrList,[Diff],CurrList1),
                                                    FinalList = CurrList1.
@@ -116,10 +126,11 @@ repetitions([A,B,C|T],[X1,X2,X3|X],Acc):-
 
 
 
-calculate_number_groups(Students,NumberGroups4,NumberGroups3):- 
+calculate_number_groups(Students,NumberGroups4,NumberGroups3,NumberThemes):- 
                   Values=[NumberGroups4,NumberGroups3],
                   NumberGroups3 in 0..Students,
                   NumberGroups4 in 0..Students,
                   Students #= NumberGroups3 * 3 + NumberGroups4 * 4,
-                  labeling([maximize(NumberGroups4)],Values).
+                  NumberThemes #= NumberGroups3+NumberGroups4,
+                  labeling([],Values).
 
