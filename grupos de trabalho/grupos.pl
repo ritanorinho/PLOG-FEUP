@@ -2,24 +2,26 @@
 :-use_module(library(random)).
 :-use_module(library(lists)).
 
-class1([1,1,1,2,2,2,3,3,3]).
-class2([1,1,2,2,4,4,5,5,1,2,3,4]).
-class3([1,1,1,3,2,2,4,2,3,4,3,4,3,4]).
-class4([1,3,4,3,4,1,2,2,1,1,2,2,3,3,4]).
-class5([1,1,1,1,2,2,2,2,3,4,3,4,3,4,3,4]).
-class6([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]).
-class7([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4,5,5,5,5]).
-class8([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4,5,5,6,5,5,6,6,6]).
-class9([1,1,1,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7]).
+class([1,1,1,2,2,2,3,3,3],9).
+class([1,1,2,2,4,4,5,5,1,2,3,4],12).
+class([1,1,1,3,2,2,4,2,3,4,3,4,3,4],14).
+class([1,3,4,3,4,1,2,2,1,1,2,2,3,3,4],15).
+class([1,1,1,1,2,2,2,2,3,4,3,4,3,4,3,4],16).
+class([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],18).
 
-grades1([15,11,13,13,14,13,14,15,16]). % 9 alunos
-grades2([12,16,17,13,12,13,18,16,12,18,12,19]).%12 alunos
-grades3([14,11,10,12,17,13,12,18,12,15,18,19,18,11]). % 14 alunos
-grades4([13,12,18,18,11,14,11,10,12,15,12,19,18,19,17]). %15 alunos
-grades5([12,11,10,12,17,11,12,18,12,15,18,10,18,11,17,12]). % 16 alunos
-grades6([15,17,17,19,15,10,12,17,11,15,11,19,15,16,18,13,14,10]). %18 alunos
-grades7([13,11,13,19,15,12,15,13,14,11,18,14,11,17,14,18,11,18,19,20]). %20 alunos
-grades8([10,13,16,15,10,12,18,13,19,14,14,10,17,14,12,19,11,19,19,12,13,13,14,15]). %24alunos
+class([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4,5,5,5,5],20).
+
+class([1,2,1,2,2,2,3,1,1,3,3,4,4,4,3,4,5,5,6,5,5,6,6,6],24).
+
+
+grades([15,11,13,13,14,13,14,15,16],9). % 9 alunos
+grades([12,16,17,13,12,13,18,16,12,18,12,19],12).%12 alunos
+grades([14,11,10,12,17,13,12,18,12,15,18,19,18,11],14). % 14 alunos
+grades([13,12,18,18,11,14,11,10,12,15,12,19,18,19,17],15). %15 alunos
+grades([12,11,10,12,17,11,12,18,12,15,18,10,18,11,17,12],16). % 16 alunos
+grades([15,17,17,19,15,10,12,17,11,15,11,19,15,16,18,13,14,10],18). %18 alunos
+grades([13,11,13,19,15,12,15,13,14,11,18,14,11,17,14,18,11,18,19,20],20). %20 alunos
+grades([10,13,16,15,10,12,18,13,19,14,14,10,17,14,12,19,11,19,19,12,13,13,14,15],24). %24alunos
 
 generate_grades(0,FinalList,FinalList):- write(FinalList).
 generate_grades(Index,CurrList,FinalList):-
@@ -40,9 +42,9 @@ output(ListGrades,X,Groups1,AverageGrades,Groups2,AverageGrades1,Time):-
                                        
 
 groups(NumberStudents,NumberThemes):- write('Processing...'),nl, 
+                        class(X,NumberStudents),
+                        grades(ListGrades,NumberStudents),
                         statistics(walltime, [Start,_]),
-                        class8(X),
-                        grades8(ListGrades),
                         length(Groups1,NumberStudents),
                         calculate_number_groups(NumberStudents,Groups4,Groups3,NumberThemes), 
                         NumberGroups #= Groups3+Groups4,
@@ -133,4 +135,3 @@ calculate_number_groups(Students,NumberGroups4,NumberGroups3,NumberThemes):-
                   Students #= NumberGroups3 * 3 + NumberGroups4 * 4,
                   NumberThemes #= NumberGroups3+NumberGroups4,
                   labeling([],Values).
-
